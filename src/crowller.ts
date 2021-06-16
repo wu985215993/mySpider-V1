@@ -41,19 +41,22 @@ class Crowller {
     return result.text
   }
   generateJsonContent(courseInfo: courseResult) {
+    //得到course.json的文件路径
     const filePath = path.resolve(__dirname, '../data/course.json')
     let fileContent: Content = {}
     if (fs.existsSync(filePath)) {
       //判断对应路径的文件是否存在
       fileContent = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
     }
-    fileContent[courseInfo.time] = courseInfo.data //把新爬到的内容存到fileContent
-    fs.writeFileSync(filePath, JSON.stringify(fileContent))
+    fileContent[courseInfo.time] = courseInfo.data
+    return fileContent //把新爬到的内容存到fileContent
   }
   async initSpiderProcess() {
     const html = await this.getRawHtml()
     const courseInfo = this.getCourseInfo(html)
-    this.generateJsonContent(courseInfo)
+    const fileContent = this.generateJsonContent(courseInfo)
+    const filePath = path.resolve(__dirname, '../data/course.json')
+    fs.writeFileSync(filePath, JSON.stringify(fileContent))
   }
   constructor() {
     this.initSpiderProcess()
