@@ -2,11 +2,13 @@ import superagent from 'superagent' //ts引入js ts不会用
 import fs from 'fs'
 import path from 'path'
 //ts -> .d.ts 翻译文件 ->js
-import DellAnalyzer from './dellAnalyzer'
+// import DellAnalyzer from './dellAnalyzer'
+import LeeAnalyzer from './leeAnalyzer'
+export interface Analyzer {
+  analyze: (html: string, filePath: string) => string
+}
 
 class Crowller {
-  private secret = 'x3b174jsx'
-  private url = `http://www.dell-lee.com/typescript/demo.html?secret=${this.secret}`
   private filePath = path.resolve(__dirname, '../data/course.json')
   //获取html字符串
   async getRawHtml() {
@@ -24,9 +26,13 @@ class Crowller {
     const fileContent = this.analyzer.analyze(html, this.filePath)
     this.writeFile(fileContent)
   }
-  constructor(private analyzer: any) {
+  constructor(private url: string, private analyzer: Analyzer) {
     this.initSpiderProcess()
   }
 }
-const analyzer = new DellAnalyzer()
-const crowller = new Crowller(analyzer)
+
+const secret = 'x3b174jsx'
+const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`
+// const analyzer = new DellAnalyzer()
+const analyzer = new LeeAnalyzer()
+new Crowller(url, analyzer)

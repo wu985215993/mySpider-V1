@@ -1,6 +1,6 @@
 import cheerio from 'cheerio' //就可以通过jQ语法去获取页面的内容
 import fs from 'fs'
-
+import { Analyzer } from './crowller'
 interface Course {
   title: string
   count: number
@@ -12,7 +12,7 @@ interface courseResult {
 interface Content {
   [propName: number]: Course[]
 }
-export default class DellAnalyzer {
+export default class DellAnalyzer implements Analyzer {
   //通过获取到html字符串获取需要爬取的数据并返回一个对象 对象接口类型是courseResult
   private getCourseInfo(html: string) {
     //通过cheerio分析
