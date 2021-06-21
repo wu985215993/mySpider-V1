@@ -13,6 +13,15 @@ interface Content {
   [propName: number]: Course[]
 }
 export default class DellAnalyzer implements Analyzer {
+  private static instance: DellAnalyzer
+  public static getInstance() {
+    //如果没有实例 则创建了一个实例
+    if (!DellAnalyzer.instance) {
+      //这样相当于只能在内部new这个实例
+      DellAnalyzer.instance = new DellAnalyzer()
+    }
+    return DellAnalyzer.instance
+  }
   //通过获取到html字符串获取需要爬取的数据并返回一个对象 对象接口类型是courseResult
   private getCourseInfo(html: string) {
     //通过cheerio分析
@@ -31,7 +40,7 @@ export default class DellAnalyzer implements Analyzer {
     }
   }
   //将获取到的 courseResult类型的数据存放到磁盘
-  generateJsonContent(courseInfo: courseResult, filePath: string) {
+  private generateJsonContent(courseInfo: courseResult, filePath: string) {
     //得到course.json的文件路径
     let fileContent: Content = {}
     if (fs.existsSync(filePath)) {
@@ -48,4 +57,6 @@ export default class DellAnalyzer implements Analyzer {
     const fileContent = this.generateJsonContent(courseInfo, filePath) //生成要存储的内容
     return JSON.stringify(fileContent)
   }
+  //单例模式将其构造函数私有化 使其无法在外部实例化
+  private constructor() {}
 }
